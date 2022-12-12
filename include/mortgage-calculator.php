@@ -13,7 +13,6 @@
 		ob_start();
             if( isset( $_POST['calculate'] ) ){
 
-                print_r( $_REQUEST );
 
                 $ShowDebugInfo          = isset( $_POST['ShowDebugInfo'] ) ? $_POST['ShowDebugInfo'] : 'false';
                 $NumberOfInsuredPersons = isset( $_POST['NumberOfInsuredPersons'] ) ? $_POST['NumberOfInsuredPersons'] : '1';
@@ -114,7 +113,7 @@
 
                                 <?php if(isset($premium)) : foreach( $premium as $key => $single ) : ?>
 
-                                    <?php if(isset($single)) : ?>
+                                    <?php if(isset($single) && $key != '$type') : ?>
                                     <li class="list-group-item"><?php echo '<span class="key-title">'.strtoupper($key) .' </span>: '.$single; ?></li>
                                     <?php endif; ?>
 
@@ -154,7 +153,7 @@
 
                             <div class="form-group my-3">
                                 <label for="NumberOfInsuredPersons" class="my-1 col-sm-2 control-label">Number Of Insured Persons<span class="required">*</span></label>
-                                <input type="number" id="NumberOfInsuredPersons" name="NumberOfInsuredPersons" value="1" class="form-control" required>
+                                <input type="number" id="NumberOfInsuredPersons" min="1" max="2140000000" name="NumberOfInsuredPersons" value="1" class="form-control" required>
                             </div>
 
                             <div class="form-group my-3">
@@ -282,24 +281,24 @@
                             <div class="form-group my-3">
                                 <label for="PaymentFormula" class="my-1 col-sm-2 control-label">Payment Formula<span class="required">*</span></label>
                                 <select name="PaymentFormula" class="form-control" id="PaymentFormula" required>
-                                    <option value="" selected>--select--</option>
-                                    <option value="HS_12_13_INSURANCE_DURATION">HS 12 13 INSURANCE DURATION</option>
+                                    <option value="">--select--</option>
+                                    <option value="HS_12_13_INSURANCE_DURATION" selected>HS 12 13 INSURANCE DURATION</option>
                                 </select>
                             </div>
                             
                             <div class="form-group my-3">
                                 <label for="PaymentFrequencyFirstYear" class="my-1 col-sm-2 control-label">Payment Frequency First Year<span class="required">*</span></label>
                                 <select name="PaymentFrequencyFirstYear" class="form-control" id="PaymentFrequencyFirstYear" required>
-                                    <option value="" selected>--select--</option>
-                                    <option value="MONTHLY">Monthly</option>
+                                    <option value="">--select--</option>
+                                    <option value="MONTHLY" selected>Monthly</option>
                                 </select>
                             </div>
                             
                             <div class="form-group my-3">
                                 <label for="PaymentFrequency" class="my-1 col-sm-2 control-label">Payment Frequency<span class="required">*</span></label>
                                 <select name="PaymentFrequency" class="form-control" id="PaymentFrequency" required>
-                                    <option value="" selected>--select--</option>
-                                    <option value="MONTHLY">Monthly</option>
+                                    <option value="">--select--</option>
+                                    <option value="MONTHLY" selected>Monthly</option>
                                 </select>
                             </div>
                             

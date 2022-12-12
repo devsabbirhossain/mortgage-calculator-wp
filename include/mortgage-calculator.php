@@ -274,8 +274,8 @@
                             <div class="form-group my-3">
                                 <label for="PremiumType" class="my-1 col-sm-2 control-label">Premium Type<span class="required">*</span></label>
                                 <select name="PremiumType" class="form-control" id="PremiumType" required>
-                                    <option value="" selected>--select--</option>
-                                    <option value="CONSTANT_PREMIUMS">Constant Premiums</option>
+                                    <option value="">--select--</option>
+                                    <option value="CONSTANT_PREMIUMS" selected>Constant Premiums</option>
                                 </select>
                             </div>
                             

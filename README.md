@@ -21,4 +21,3 @@ This is a simple Mortgage Calculator Which Provide a Mortgage Details like loan 
   <p>3. Add Usename and Password in plugin area to generate Token and save all the data.
   <p>4. Add Shortcode To your Page or section where you want to show this calculator and save it.
   <p>5. view the page to see the form.
-lol

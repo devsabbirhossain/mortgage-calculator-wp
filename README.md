@@ -1,4 +1,4 @@
-# mortgage-calculator-wp
+# Mortgage Calculator
 Contributors: mtmsujan, devsabbirhossain
 Homepage: https://sabbir.brothersdeveloper.com
 Tags: PHP CURL, Simple Mortgage Equations, WordPress Plugin

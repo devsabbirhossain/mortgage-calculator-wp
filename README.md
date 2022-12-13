@@ -1,5 +1,5 @@
 # Mortgage Calculator
-Contributors: mtmsujan, devsabbirhossain
+**Contributors:** mtmsujan, devsabbirhossain
 Homepage: https://sabbir.brothersdeveloper.com
 Tags: PHP CURL, Simple Mortgage Equations, WordPress Plugin
 Requires at least: 3.8.0

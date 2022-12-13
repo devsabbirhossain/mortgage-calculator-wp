@@ -4,8 +4,8 @@
     * Plugin Name: Mortgage Calculator STIT
     * Plugin URI: https://softtechiit.com
     * Description: Mortgage Calculator Api
-    * Author: mtm-sujon
-    * Author URI: https://github.com/mtmsujon
+    * Author: Sabbir Hossain
+    * Author URI: https://github.com/devsabbirhossain
     * Version: 1.0.0
     */
 

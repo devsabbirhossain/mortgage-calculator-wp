@@ -1,11 +1,12 @@
 <?php
 
-
     add_action( 'wp_enqueue_scripts', 'plugin_admin_init' );
     function plugin_admin_init(){
         wp_enqueue_style( 'bootstrap-plugin', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css');
         wp_enqueue_style( 'customstyle-plugin', plugins_url( '../assets/css/style.css', __FILE__ ));
+        wp_enqueue_script( 'customstyle-plugin-js', plugins_url( '../assets/js/custom.js', __FILE__ ), array('jquery'), '1.0' );
     }
+    
 
     add_shortcode('mortgage-calculator', 'mortgage_calculator');
 
@@ -18,6 +19,7 @@
                 $ShowDebugInfo          = 'true';
 
                 /////get from customer
+                ///1st person information
                 $NumberOfInsuredPersons = isset( $_POST['NumberOfInsuredPersons'] ) ? $_POST['NumberOfInsuredPersons'] : '1';
                 $Ip1Name                = isset( $_POST['Ip1Name'] ) ? $_POST['Ip1Name'] : '';
                 $Ip1Surname             = isset( $_POST['Ip1Surname'] ) ? $_POST['Ip1Surname'] : '';
@@ -26,6 +28,20 @@
                 $Ip1IsSmoker            = isset( $_POST['Ip1IsSmoker'] ) ? $_POST['Ip1IsSmoker'] : '';
                 // $Ip1IsSmoker            = 'NONSMOKER';
                 $Ip1Gender              = isset( $_POST['Ip1Gender'] ) ? $_POST['Ip1Gender'] : '';
+
+                ///2nd person information
+                $Ip2Name                = isset( $_POST['Ip2Name'] ) ? $_POST['Ip2Name'] : '';
+                //echo $Ip2Name;
+                $Ip2Surname             = isset( $_POST['Ip2Surname'] ) ? $_POST['Ip2Surname'] : '';
+                //echo $Ip2Surname;
+                $Ip2BirthDate           = isset( $_POST['Ip2BirthDate'] ) ? $_POST['Ip2BirthDate'] : '';
+                $Ip2BirthDate           = date("Y-m-d", strtotime($Ip2BirthDate));
+                //echo $Ip2BirthDate;
+                $Ip2IsSmoker            = isset( $_POST['Ip2IsSmoker'] ) ? $_POST['Ip2IsSmoker'] : '';
+                //echo $Ip2IsSmoker;
+                // $Ip2IsSmoker            = 'NONSMOKER';
+                $Ip2Gender              = isset( $_POST['Ip2Gender'] ) ? $_POST['Ip2Gender'] : '';
+                //echo $Ip2Gender;
 
 
                 ////Get automatically
@@ -60,7 +76,7 @@
                 //$DurationType = isset( $_POST['DurationType'] ) ? $_POST['DurationType'] : '';
                 $DurationType = 'TWO_THIRDS_DURATION';
                 // $CommissionPercentage = isset( $_POST['CommissionPercentage'] ) ? $_POST['CommissionPercentage'] : '';
-                $CommissionPercentage = 10;
+                $CommissionPercentage = 1;
                 // $CommissionFixedAmount = isset( $_POST['CommissionFixedAmount'] ) ? $_POST['CommissionFixedAmount'] : '';
                 $CommissionFixedAmount = 0;
                 //$PremiumType = isset( $_POST['PremiumType'] ) ? $_POST['PremiumType'] : '';
@@ -98,9 +114,13 @@
                 curl_close($curl);
         
                 $token = json_decode( $response, true )['access_token'];
-        
-        
-        
+                
+                if($NumberOfInsuredPersons == 2){
+                    $CURLOPT_POSTFIELDS = '{"ShowDebugInfo":'.$ShowDebugInfo.',"NumberOfInsuredPersons" : '.$NumberOfInsuredPersons.',"Ip1Name":"'.$Ip1Name.'","Ip1Surname" :"'.$Ip1Surname.'","Ip1BirthDate":"'.$Ip1BirthDate.'T00:00:00","Ip1IsSmoker":"'.$Ip1IsSmoker.'","Ip1Gender":"'.$Ip1Gender.'","Ip2Name":"'.$Ip2Name.'","Ip2Surname" :"'.$Ip2Surname.'","Ip2BirthDate":"'.$Ip2BirthDate.'T00:00:00","Ip2IsSmoker":"'.$Ip2IsSmoker.'","Ip2Gender":"'.$Ip2Gender.'","Fiscality":"NP_NOT_FISCAL","PurposeType":"'.$PurposeType.'","FreeCoverageStartDate":"'.$FreeCoverageStartDate.'T00:00:00","StartDate":"'.$StartDate.'T00:00:00","Formula":"'.$Formula.'","AmortizationFrequency":"'.$AmortizationFrequency.'","InsuredAmount":'.$InsuredAmount.',"YearlyInterestPercentage":'.$YearlyInterestPercentage.',"CoverageDurationInMonths":'.$CoverageDurationInMonths.',"MonthsWithoutAmortization":'.$MonthsWithoutAmortization.',"DurationType":"'.$DurationType.'","CommissionPercentage":'.$CommissionPercentage.',"CommissionFixedAmount":'.$CommissionFixedAmount.',"PremiumType":"'.$PremiumType.'","PaymentFormula":"'.$PaymentFormula.'","PaymentFrequencyFirstYear":"'.$PaymentFrequencyFirstYear.'","PaymentFrequency":"'.$PaymentFrequency.'","TariffCode":"'.$TariffCode.'"}';
+                }else{
+                    $CURLOPT_POSTFIELDS = '{"ShowDebugInfo":'.$ShowDebugInfo.',"NumberOfInsuredPersons":'.$NumberOfInsuredPersons.',"Ip1Name":"'.$Ip1Name.'","Ip1Surname" :"'.$Ip1Surname.'","Ip1BirthDate":"'.$Ip1BirthDate.'T00:00:00","Ip1IsSmoker":"'.$Ip1IsSmoker.'","Ip1Gender":"'.$Ip1Gender.'","Fiscality":"'.$Fiscality.'","PurposeType":"'.$PurposeType.'","FreeCoverageStartDate":"'.$FreeCoverageStartDate.'T00:00:00","StartDate":"'.$StartDate.'T00:00:00","Formula":"'.$Formula.'","AmortizationFrequency":"'.$AmortizationFrequency.'","InsuredAmount":'.$InsuredAmount.',"YearlyInterestPercentage":'.$YearlyInterestPercentage.',"CoverageDurationInMonths":'.$CoverageDurationInMonths.',"MonthsWithoutAmortization":'.$MonthsWithoutAmortization.',"DurationType":"'.$DurationType.'","CommissionPercentage":'.$CommissionPercentage.',"CommissionFixedAmount":'.$CommissionFixedAmount.',"PremiumType":"'.$PremiumType.'","PaymentFormula":"'.$PaymentFormula.'","PaymentFrequencyFirstYear":"'.$PaymentFrequencyFirstYear.'","PaymentFrequency":"'.$PaymentFrequency.'","TariffCode":"'.$TariffCode.'"}';
+                }
+               
                 $curl = curl_init();
         
                 curl_setopt_array($curl, array(
@@ -112,7 +132,7 @@
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'POST',
-                CURLOPT_POSTFIELDS =>'{"ShowDebugInfo":'.$ShowDebugInfo.',"NumberOfInsuredPersons":'.$NumberOfInsuredPersons.',"Ip1Name":"'.$Ip1Name.'","Ip1Surname" :"'.$Ip1Surname.'","Ip1BirthDate":"'.$Ip1BirthDate.'T00:00:00","Ip1IsSmoker":"'.$Ip1IsSmoker.'","Ip1Gender":"'.$Ip1Gender.'","Fiscality":"'.$Fiscality.'","PurposeType":"'.$PurposeType.'","FreeCoverageStartDate":"'.$FreeCoverageStartDate.'T00:00:00","StartDate":"'.$StartDate.'T00:00:00","Formula":"'.$Formula.'","AmortizationFrequency":"'.$AmortizationFrequency.'","InsuredAmount":'.$InsuredAmount.',"YearlyInterestPercentage":'.$YearlyInterestPercentage.',"CoverageDurationInMonths":'.$CoverageDurationInMonths.',"MonthsWithoutAmortization":'.$MonthsWithoutAmortization.',"DurationType":"'.$DurationType.'","CommissionPercentage":'.$CommissionPercentage.',"CommissionFixedAmount":'.$CommissionFixedAmount.',"PremiumType":"'.$PremiumType.'","PaymentFormula":"'.$PaymentFormula.'","PaymentFrequencyFirstYear":"'.$PaymentFrequencyFirstYear.'","PaymentFrequency":"'.$PaymentFrequency.'","TariffCode":"'.$TariffCode.'"}',
+                CURLOPT_POSTFIELDS =>$CURLOPT_POSTFIELDS,
                 CURLOPT_HTTPHEADER => array(
                     'Content-Type: application/json',
                     'Authorization: Bearer ' . $token
@@ -199,37 +219,75 @@
                                     <option value="2">2</option>
                                 </select>
                             </div>
+                            <div class="section">
+                                <h5>First Person Information<span class="required">*</span></h5>
+                                <div class="form-group my-3">
+                                    <label for="Ip1Name" class="my-1 col-sm-2 control-label">First Name<span class="required">*</span></label>
+                                    <input required type="text" id="Ip1Name" name="Ip1Name" class="form-control" required>
+                                </div>
 
-                            <div class="form-group my-3">
-                                <label for="Ip1Name" class="my-1 col-sm-2 control-label">First Name<span class="required">*</span></label>
-                                <input required type="text" id="Ip1Name" name="Ip1Name" class="form-control" required>
+                                <div class="form-group my-3">
+                                    <label for="Ip1Surname" class="my-1 col-sm-2 control-label">Last Name<span class="required">*</span></label>
+                                    <input required type="text" id="Ip1Surname" name="Ip1Surname" class="form-control" required>
+                                </div>
+
+                                <div class="form-group my-3">
+                                    <label for="Ip1BirthDate" class="my-1 col-sm-2 control-label">Birth Date<span class="required">*</span></label>
+                                    <input required type="date" id="Ip1BirthDate" name="Ip1BirthDate" class="form-control" max="1984-10-30" min="1964-04-01" value="1984-10-02" required>
+                                </div>
+                                <div class="form-group my-3">
+                                    <label for="Ip1IsSmoker" class="my-1 col-sm-2 control-label">Is Smoker<span class="required">*</span></label>
+                                    <select name="Ip1IsSmoker" class="form-control" required>
+                                        <option value="">--select--</option>
+                                        <option value="SMOKER" selected>Smoker</option>
+                                        <option value="NONSMOKER">Non Smoker</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group my-3">
+                                    <label for="Ip1Gender" class="my-1 col-sm-2 control-label">Gender<span class="required">*</span></label>
+                                    <select name="Ip1Gender" id="Ip1Gender" class="form-control" required>
+                                        <option value="">--select--</option>
+                                        <option value="MALE" selected>Male</option>
+                                        <option value="FEMALE">Female</option>
+                                    </select>
+                                </div>
                             </div>
 
-                            <div class="form-group my-3">
-                                <label for="Ip1Surname" class="my-1 col-sm-2 control-label">Last Name<span class="required">*</span></label>
-                                <input required type="text" id="Ip1Surname" name="Ip1Surname" class="form-control" required>
-                            </div>
 
-                            <div class="form-group my-3">
-                                <label for="Ip1BirthDate" class="my-1 col-sm-2 control-label">Birth Date<span class="required">*</span></label>
-                                <input required type="date" id="Ip1BirthDate" name="Ip1BirthDate" class="form-control" max="1984-10-30" min="1964-04-01" value="1984-10-02" required>
-                            </div>
-                            <div class="form-group my-3">
-                                <label for="Ip1IsSmoker" class="my-1 col-sm-2 control-label">Is Smoker<span class="required">*</span></label>
-                                <select name="Ip1IsSmoker" class="form-control" required>
-                                    <option value="">--select--</option>
-                                    <option value="SMOKER" selected>Smoker</option>
-                                    <option value="NONSMOKER">Non Smoker</option>
-                                </select>
-                            </div>
+                            <div class="section person-2 box-style">
+                                <h5>Second Person Information<span class="required">*</span></h5>
+                                <div class="form-group my-3">
+                                    <label for="Ip2Name" class="my-1 col-sm-2 control-label">First Name<span class="required">*</span></label>
+                                    <input type="text" id="Ip2Name" name="Ip2Name" class="form-control">
+                                </div>
 
-                            <div class="form-group my-3">
-                                <label for="Ip1Gender" class="my-1 col-sm-2 control-label">Gender<span class="required">*</span></label>
-                                <select name="Ip1Gender" id="Ip1Gender" class="form-control" required>
-                                    <option value="">--select--</option>
-                                    <option value="MALE" selected>Male</option>
-                                    <option value="FEMALE">Female</option>
-                                </select>
+                                <div class="form-group my-3">
+                                    <label for="Ip2Surname" class="my-1 col-sm-2 control-label">Last Name<span class="required">*</span></label>
+                                    <input type="text" id="Ip2Surname" name="Ip2Surname" class="form-control">
+                                </div>
+
+                                <div class="form-group my-3">
+                                    <label for="Ip2BirthDate" class="my-1 col-sm-2 control-label">Birth Date<span class="required">*</span></label>
+                                    <input required type="date" id="Ip2BirthDate" name="Ip2BirthDate" class="form-control" max="1984-10-30" min="1964-04-01" value="1984-10-02">
+                                </div>
+                                <div class="form-group my-3">
+                                    <label for="Ip2IsSmoker" class="my-1 col-sm-2 control-label">Is Smoker<span class="required">*</span></label>
+                                    <select name="Ip2IsSmoker" class="form-control">
+                                        <option value="">--select--</option>
+                                        <option value="SMOKER" selected>Smoker</option>
+                                        <option value="NONSMOKER">Non Smoker</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group my-3">
+                                    <label for="Ip2Gender" class="my-1 col-sm-2 control-label">Gender<span class="required">*</span></label>
+                                    <select name="Ip2Gender" id="Ip2Gender" class="form-control">
+                                        <option value="">--select--</option>
+                                        <option value="MALE" selected>Male</option>
+                                        <option value="FEMALE">Female</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <!-- <div class="form-group my-3">
@@ -253,107 +311,109 @@
                                 <label for="FreeCoverageStartDate" class="my-1 col-sm-2 control-label">Free Coverage Start Date<span class="required">*</span></label>
                                 <input type="date" value="2022-10-10" id="FreeCoverageStartDate" name="FreeCoverageStartDate" class="form-control" required>
                             </div> -->
+                            <div class="section box-style">
+                                <h5>Mortgage Information<span class="required">*</span></h5>
+                                <div class="form-group my-3">
+                                    <label for="StartDate" class="my-1 col-sm-2 control-label">Start Date<span class="required">*</span></label>
+                                    <input type="date" value="2022-10-10" id="StartDate" name="StartDate" class="form-control" required>
+                                </div>
 
-                            <div class="form-group my-3">
-                                <label for="StartDate" class="my-1 col-sm-2 control-label">Start Date<span class="required">*</span></label>
-                                <input type="date" value="2022-10-10" id="StartDate" name="StartDate" class="form-control" required>
-                            </div>
+                                <!-- <div class="form-group my-3">
+                                    <label for="Formula" class="my-1 col-sm-2 control-label">Formula<span class="required">*</span></label>
+                                    <select name="Formula" class="form-control" required>
+                                        <option value="">--select--</option>
+                                        <option value="ANNUITY" selected>Annuity</option>
+                                    </select>
+                                </div> -->
 
-                            <!-- <div class="form-group my-3">
-                                <label for="Formula" class="my-1 col-sm-2 control-label">Formula<span class="required">*</span></label>
-                                <select name="Formula" class="form-control" required>
-                                    <option value="">--select--</option>
-                                    <option value="ANNUITY" selected>Annuity</option>
-                                </select>
-                            </div> -->
+                                <!-- <div class="form-group my-3">
+                                    <label for="AmortizationFrequency" class="my-1 col-sm-2 control-label">Amortization Frequency<span class="required">*</span></label>
+                                    <select name="AmortizationFrequency" class="form-control" required>
+                                        <option value="">--select--</option>
+                                        <option value="MONTHLY" selected>Monthly</option>
+                                    </select>
+                                </div> -->
 
-                            <!-- <div class="form-group my-3">
-                                <label for="AmortizationFrequency" class="my-1 col-sm-2 control-label">Amortization Frequency<span class="required">*</span></label>
-                                <select name="AmortizationFrequency" class="form-control" required>
-                                    <option value="">--select--</option>
-                                    <option value="MONTHLY" selected>Monthly</option>
-                                </select>
-                            </div> -->
+                                <div class="form-group my-3">
+                                    <label for="InsuredAmount" class="my-1 col-sm-2 control-label">Insured Amount<span class="required">*</span></label>
+                                    <input min="88850" max="20000000" type="number" id="InsuredAmount" name="InsuredAmount" class="form-control" value="150000.0" required>
+                                </div>
 
-                            <div class="form-group my-3">
-                                <label for="InsuredAmount" class="my-1 col-sm-2 control-label">Insured Amount<span class="required">*</span></label>
-                                <input min="88850" max="20000000" type="number" id="InsuredAmount" name="InsuredAmount" class="form-control" value="150000.0" required>
-                            </div>
+                                <div class="form-group my-3">
+                                    <label for="YearlyInterestPercentage" class="my-1 col-sm-2 control-label">Yearly Interest Percentage<span class="required">*</span></label>
+                                    <input type="number" min="2" max="20"  value="2" id="YearlyInterestPercentage" name="YearlyInterestPercentage" class="form-control" required>
+                                </div>
 
-                            <div class="form-group my-3">
-                                <label for="YearlyInterestPercentage" class="my-1 col-sm-2 control-label">Yearly Interest Percentage<span class="required">*</span></label>
-                                <input type="number" min="2.05" max="20.00"  value="2.05" id="YearlyInterestPercentage" name="YearlyInterestPercentage" class="form-control" required>
-                            </div>
+                                <div class="form-group my-3">
+                                    <label for="CoverageDurationInMonths" class="my-1 col-sm-2 control-label">Coverage Duration In Months<span class="required">*</span></label>
+                                    <input type="number" min="152" max="440"  value="240" id="CoverageDurationInMonths" name="CoverageDurationInMonths" class="form-control" required>
+                                </div>
+                                
 
-                            <div class="form-group my-3">
-                                <label for="CoverageDurationInMonths" class="my-1 col-sm-2 control-label">Coverage Duration In Months<span class="required">*</span></label>
-                                <input type="number" min="152" max="440"  value="240" id="CoverageDurationInMonths" name="CoverageDurationInMonths" class="form-control" required>
-                            </div>
-                            
+                                <div class="form-group my-3">
+                                    <label for="MonthsWithoutAmortization" class="my-1 col-sm-2 control-label">Months Without Amortization<span class="required">*</span></label>
+                                    <input type="number" min="1" max="24" placeholder="Enter number between 1 to 24" id="MonthsWithoutAmortization" name="MonthsWithoutAmortization" class="form-control" required>
+                                </div>
+                                
 
-                            <div class="form-group my-3">
-                                <label for="MonthsWithoutAmortization" class="my-1 col-sm-2 control-label">Months Without Amortization<span class="required">*</span></label>
-                                <input type="number" min="1" max="24" placeholder="Enter number between 1 to 24" id="MonthsWithoutAmortization" name="MonthsWithoutAmortization" class="form-control" required>
-                            </div>
-                            
-
-                            <!-- <div class="form-group my-3">
-                                <label for="DurationType" class="my-1 col-sm-2 control-label">Duration Type<span class="required">*</span></label>
-                                <select name="DurationType" class="form-control" id="DurationType" required>
-                                    <option value="">--select--</option>
-                                    <option value="TWO_THIRDS_DURATION" selected>TWO THIRDS DURATION</option>
-                                </select>
-                            </div> -->
-                            
-                            <div class="form-group my-3">
-                                <label for="CommissionPercentage" class="my-1 col-sm-2 control-label">Commission Percentage<span class="required">*</span></label>
-                                <input type="number" value="10" id="CommissionPercentage" name="CommissionPercentage" class="form-control" disabled>
-                            </div>
-                            
-                            <div class="form-group my-3">
-                                <label for="CommissionFixedAmount" class="my-1 col-sm-2 control-label">Commission Fixed Amount<span class="required">*</span></label>
-                                <input type="number" value="0.0" id="CommissionFixedAmount" name="CommissionFixedAmount" class="form-control" disabled>
-                            </div>
-                            
-                            <!-- <div class="form-group my-3">
-                                <label for="PremiumType" class="my-1 col-sm-2 control-label">Premium Type<span class="required">*</span></label>
-                                <select name="PremiumType" class="form-control" id="PremiumType" required>
-                                    <option value="">--select--</option>
-                                    <option value="CONSTANT_PREMIUMS" selected>Constant Premiums</option>
-                                </select>
-                            </div> -->
-                            
-                            <!-- <div class="form-group my-3">
-                                <label for="PaymentFormula" class="my-1 col-sm-2 control-label">Payment Formula<span class="required">*</span></label>
-                                <select name="PaymentFormula" class="form-control" id="PaymentFormula" required>
-                                    <option value="">--select--</option>
-                                    <option value="HS_12_13_INSURANCE_DURATION" selected>HS 12 13 INSURANCE DURATION</option>
-                                </select>
-                            </div> -->
-                            
-                            <!-- <div class="form-group my-3">
-                                <label for="PaymentFrequencyFirstYear" class="my-1 col-sm-2 control-label">Payment Frequency First Year<span class="required">*</span></label>
-                                <select name="PaymentFrequencyFirstYear" class="form-control" id="PaymentFrequencyFirstYear" required>
-                                    <option value="">--select--</option>
-                                    <option value="MONTHLY" selected>Monthly</option>
-                                </select>
-                            </div> -->
-                            
-                            <!-- <div class="form-group my-3">
-                                <label for="PaymentFrequency" class="my-1 col-sm-2 control-label">Payment Frequency<span class="required">*</span></label>
-                                <select name="PaymentFrequency" class="form-control" id="PaymentFrequency" required>
-                                    <option value="">--select--</option>
-                                    <option value="MONTHLY" selected>Monthly</option>
-                                </select>
-                            </div> -->
-                            
-                            <!-- <div class="form-group my-3">
-                                <label for="TariffCode" class="my-1 col-sm-2 control-label">Tariff Code<span class="required">*</span></label>
-                                <input type="text" id="TariffCode" name="TariffCode" class="form-control" value="EA11" required>
-                            </div> -->
-                            
-                            <div class="form-group my-3">
-                                <input type="submit" name="calculate" class="btn btn-primary btn-lg" value="Calculate">
+                                <!-- <div class="form-group my-3">
+                                    <label for="DurationType" class="my-1 col-sm-2 control-label">Duration Type<span class="required">*</span></label>
+                                    <select name="DurationType" class="form-control" id="DurationType" required>
+                                        <option value="">--select--</option>
+                                        <option value="TWO_THIRDS_DURATION" selected>TWO THIRDS DURATION</option>
+                                    </select>
+                                </div> -->
+                                
+                                <div class="form-group my-3">
+                                    <label for="CommissionPercentage" class="my-1 col-sm-2 control-label">Commission Percentage<span class="required">*</span></label>
+                                    <input type="number" value="1" id="CommissionPercentage" name="CommissionPercentage" class="form-control" disabled>
+                                </div>
+                                
+                                <div class="form-group my-3">
+                                    <label for="CommissionFixedAmount" class="my-1 col-sm-2 control-label">Commission Fixed Amount<span class="required">*</span></label>
+                                    <input type="number" value="0.0" id="CommissionFixedAmount" name="CommissionFixedAmount" class="form-control" disabled>
+                                </div>
+                                
+                                <!-- <div class="form-group my-3">
+                                    <label for="PremiumType" class="my-1 col-sm-2 control-label">Premium Type<span class="required">*</span></label>
+                                    <select name="PremiumType" class="form-control" id="PremiumType" required>
+                                        <option value="">--select--</option>
+                                        <option value="CONSTANT_PREMIUMS" selected>Constant Premiums</option>
+                                    </select>
+                                </div> -->
+                                
+                                <!-- <div class="form-group my-3">
+                                    <label for="PaymentFormula" class="my-1 col-sm-2 control-label">Payment Formula<span class="required">*</span></label>
+                                    <select name="PaymentFormula" class="form-control" id="PaymentFormula" required>
+                                        <option value="">--select--</option>
+                                        <option value="HS_12_13_INSURANCE_DURATION" selected>HS 12 13 INSURANCE DURATION</option>
+                                    </select>
+                                </div> -->
+                                
+                                <!-- <div class="form-group my-3">
+                                    <label for="PaymentFrequencyFirstYear" class="my-1 col-sm-2 control-label">Payment Frequency First Year<span class="required">*</span></label>
+                                    <select name="PaymentFrequencyFirstYear" class="form-control" id="PaymentFrequencyFirstYear" required>
+                                        <option value="">--select--</option>
+                                        <option value="MONTHLY" selected>Monthly</option>
+                                    </select>
+                                </div> -->
+                                
+                                <!-- <div class="form-group my-3">
+                                    <label for="PaymentFrequency" class="my-1 col-sm-2 control-label">Payment Frequency<span class="required">*</span></label>
+                                    <select name="PaymentFrequency" class="form-control" id="PaymentFrequency" required>
+                                        <option value="">--select--</option>
+                                        <option value="MONTHLY" selected>Monthly</option>
+                                    </select>
+                                </div> -->
+                                
+                                <!-- <div class="form-group my-3">
+                                    <label for="TariffCode" class="my-1 col-sm-2 control-label">Tariff Code<span class="required">*</span></label>
+                                    <input type="text" id="TariffCode" name="TariffCode" class="form-control" value="EA11" required>
+                                </div> -->
+                                
+                                <div class="form-group my-3">
+                                    <input type="submit" name="calculate" class="btn btn-primary btn-lg" value="Calculate">
+                                </div>
                             </div>
                         </form>
                     </div>
